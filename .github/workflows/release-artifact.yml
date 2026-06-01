@@ -20,7 +20,7 @@ jobs:
         with:
           args: zip -qq -r build/bm-concierge.zip ${{ github.event.repository.name}}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: bm-concierge
           path: build/bm-concierge.zip
