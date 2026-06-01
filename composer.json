@@ -19,7 +19,7 @@
   "require-dev": {
     "bernskioldmedia/phpcs-wordpress": "dev-master",
     "bernskioldmedia/wp-plugin-base": "^2.3.0",
-    "yahnis-elsts/plugin-update-checker": "^4.11"
+    "yahnis-elsts/plugin-update-checker": "^5.7"
   },
   "license": "GPL-3.0+",
   "authors": [
