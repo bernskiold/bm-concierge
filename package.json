@@ -46,7 +46,7 @@
     "@wordpress/edit-post": "^5.0.1",
     "@wordpress/element": "^4.0.0",
     "@wordpress/i18n": "^4.2.1",
-    "@wordpress/icons": "^5.0.1",
+    "@wordpress/icons": "^13.2.0",
     "@wordpress/plugins": "^4.0.1",
     "@wordpress/wordcount": "^3.2.1"
   }
