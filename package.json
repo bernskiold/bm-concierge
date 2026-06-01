@@ -48,6 +48,6 @@
     "@wordpress/i18n": "^4.2.1",
     "@wordpress/icons": "^5.0.1",
     "@wordpress/plugins": "^4.0.1",
-    "@wordpress/wordcount": "^3.2.1"
+    "@wordpress/wordcount": "^4.47.0"
   }
 }
