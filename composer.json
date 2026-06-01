@@ -14,7 +14,7 @@
   "require": {
     "php": "^7.4|^8.0",
     "composer/installers": "~1.0",
-    "deeplcom/deepl-php": "^0.4.0"
+    "deeplcom/deepl-php": "^1.18.0"
   },
   "require-dev": {
     "bernskioldmedia/phpcs-wordpress": "dev-master",
