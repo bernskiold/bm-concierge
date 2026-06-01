@@ -11,6 +11,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # Don't open routine major-version PRs. Security updates still bump majors.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -21,6 +26,11 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # Don't open routine major-version PRs. Security updates still bump majors.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -31,3 +41,8 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # Don't open routine major-version PRs. Security updates still bump majors.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
