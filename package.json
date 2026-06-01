@@ -36,7 +36,7 @@
     "fast-glob": "^3.2.7",
     "path": "^0.12.7",
     "replace-in-file-webpack-plugin": "^1.0.6",
-    "webpackbar": "^5.0.0-3"
+    "webpackbar": "^7.0.0"
   },
   "dependencies": {
     "@wordpress/api-fetch": "^5.2.1",
