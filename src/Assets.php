@@ -10,15 +10,11 @@
 
 namespace BernskioldMedia\WP\Concierge;
 
-use BMCG_Vendor\BernskioldMedia\WP\PluginBase\AssetManager;
-
 defined( 'ABSPATH' ) || exit;
 
-class Assets extends AssetManager {
+class Assets implements Hookable {
 
 	public static function hooks(): void {
-		parent::hooks();
-
 		add_action( 'enqueue_block_editor_assets', [ self::class, 'block_editor' ] );
 	}
 

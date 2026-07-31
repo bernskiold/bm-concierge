@@ -7,7 +7,6 @@ use BernskioldMedia\WP\Concierge\Services\Layout;
 use BernskioldMedia\WP\Concierge\Services\MachineTranslation;
 use BernskioldMedia\WP\Concierge\Services\OnPageOptimization;
 use BernskioldMedia\WP\Concierge\Services\Proofreading;
-use BMCG_Vendor\BernskioldMedia\WP\PluginBase\Rest\RestEndpoint;
 use DeepL\Translator;
 use WP_REST_Request;
 use WP_REST_Response;
