@@ -5,7 +5,13 @@ export const useServices = () => {
 		return select( 'bm/concierge' ).getServices();
 	}, [] );
 
-	const { onpage, proofreading, layout, accessibility, machine_translation: machineTranslation } = services;
+	const {
+		onpage,
+		proofreading,
+		layout,
+		accessibility,
+		machine_translation: machineTranslation,
+	} = services;
 
 	return {
 		enabledServicesCount: Object.keys( services ).length,

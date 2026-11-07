@@ -1,5 +1,9 @@
 import { register } from '@wordpress/data';
-import { PluginDocumentSettingPanel, PluginSidebar, PluginSidebarMoreMenuItem } from '@wordpress/edit-post';
+import {
+	PluginDocumentSettingPanel,
+	PluginSidebar,
+	PluginSidebarMoreMenuItem,
+} from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import './block-editor.css';
@@ -20,9 +24,7 @@ registerPlugin( 'bm-concierge', {
 			>
 				<ConciergePanel />
 			</PluginDocumentSettingPanel>
-			<PluginSidebarMoreMenuItem
-				target="sidebar"
-				icon={ icon }>
+			<PluginSidebarMoreMenuItem target="sidebar" icon={ icon }>
 				{ __( 'BM Concierge', 'bm-concierge' ) }
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar

@@ -3,25 +3,27 @@
   "private": true,
   "version": "1.1.1",
   "description": "Our help at your fingertips. BM Concierge lets you easily access content and assistive service for your site, right from the dashboard.",
-  "main": "assets/scripts/src/index.js",
   "scripts": {
-    "test": "phpunit",
-    "release": "npm install && composer install --no-dev -o && npm run build",
     "setup": "npm install && composer install && npm run build",
+    "release": "npm ci && composer install --no-dev -o && npm run build",
     "build": "wp-scripts build",
-    "dev": "wp-scripts start",
+    "start": "wp-scripts start",
+    "dev": "npm run start",
+    "format": "wp-scripts format ./assets/src",
+    "lint": "npm run lint:js && npm run lint:css",
+    "lint:js": "wp-scripts lint-js ./assets/src",
+    "lint:css": "wp-scripts lint-style \"assets/src/**/*.css\"",
+    "lint:pkg-json": "wp-scripts lint-pkg-json",
     "i18n": "npm run i18n:pot",
-    "i18n:pot": "npm run build && wp i18n make-pot . ./languages/bm-concierge.pot --include=\"assets/scripts/dist/,src/\"",
-    "i18n:makejed": "wp i18n make-json languages --no-purge",
+    "i18n:pot": "npm run build && wp i18n make-pot . ./languages/bm-concierge.pot --include=\"dist/,src/\"",
+    "i18n:json": "wp i18n make-json languages --no-purge",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-    "format": "npm run format ./assets/scripts/src",
-    "lint:css": "wp-scripts lint-style",
-    "lint:js": "wp-scripts lint-js",
-    "lint:md:docs": "wp-scripts lint-md-docs",
-    "lint:md:js": "wp-scripts lint-md-js",
-    "lint:pkg-json": "wp-scripts lint-pkg-json",
     "packages-update": "wp-scripts packages-update"
+  },
+  "engines": {
+    "node": ">=22.22.2",
+    "npm": ">=10"
   },
   "author": {
     "name": "Bernskiold Media",
@@ -29,25 +31,25 @@
     "url": "https://bernskioldmedia.com",
     "role": "developer"
   },
-  "devDependencies": {
-    "@wordpress/eslint-plugin": "^9.1.1",
-    "@wordpress/scripts": "^18.0.0",
-    "eslint": "^7.31.0",
-    "fast-glob": "^3.3.3",
-    "path": "^0.12.7",
-    "replace-in-file-webpack-plugin": "^1.0.6",
-    "webpackbar": "^5.0.0-3"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bernskiold/bm-concierge.git"
   },
-  "dependencies": {
-    "@wordpress/api-fetch": "^7.57.0",
-    "@wordpress/blocks": "^11.0.1",
-    "@wordpress/components": "^16.0.0",
-    "@wordpress/data": "^6.0.1",
-    "@wordpress/edit-post": "^5.0.1",
-    "@wordpress/element": "^4.0.0",
-    "@wordpress/i18n": "^4.58.0",
-    "@wordpress/icons": "^5.0.1",
-    "@wordpress/plugins": "^4.0.1",
-    "@wordpress/wordcount": "^3.58.0"
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/bernskiold/bm-concierge/issues"
+  },
+  "homepage": "https://github.com/bernskiold/bm-concierge#readme",
+  "devDependencies": {
+    "@wordpress/api-fetch": "^8.1.0",
+    "@wordpress/blocks": "^17.1.0",
+    "@wordpress/components": "^44.0.0",
+    "@wordpress/data": "^11.1.0",
+    "@wordpress/editor": "^16.1.0",
+    "@wordpress/element": "^10.1.0",
+    "@wordpress/i18n": "^7.1.0",
+    "@wordpress/plugins": "^8.1.0",
+    "@wordpress/scripts": "^37.1.0",
+    "@wordpress/wordcount": "^5.1.0"
   }
 }

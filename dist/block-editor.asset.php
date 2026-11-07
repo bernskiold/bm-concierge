@@ -1,1 +1,15 @@
-<?php return array('dependencies' => array('wp-api-fetch', 'wp-blocks', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-element', 'wp-i18n', 'wp-plugins', 'wp-polyfill', 'wp-wordcount'), 'version' => '925e2d1cae47ca47df03');
+<?php return array(
+	'dependencies' => array(
+		'react-jsx-runtime',
+		'wp-api-fetch',
+		'wp-blocks',
+		'wp-components',
+		'wp-data',
+		'wp-editor',
+		'wp-element',
+		'wp-i18n',
+		'wp-plugins',
+		'wp-wordcount'
+	),
+	'version' => 'cae704e583ce918a55e8'
+);
