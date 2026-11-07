@@ -22,7 +22,7 @@ class Plugin {
 		Rest\Concierge::class,
 	];
 
-	protected static string $version = '1.1.1';
+	protected static string $version = '2.0.0';
 
 	private static ?self $instance = null;
 

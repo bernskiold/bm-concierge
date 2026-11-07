@@ -3,7 +3,7 @@
  * Plugin Name:         BM Concierge
  * Plugin URI:          https://bernskioldmedia.com
  * Description:         Our help at your fingertips. BM Concierge lets you easily access content and assistive service for your site, right from the dashboard.
- * Version:             1.1.1
+ * Version:             2.0.0
  * Requires at least:   7.0
  * Tested up to:        7.1
  * Requires PHP:        8.2
