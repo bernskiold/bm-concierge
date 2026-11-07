@@ -33,21 +33,26 @@ abstract class BaseService {
 
 		if ( false === $data ) {
 			$response = wp_remote_get( $api_url );
-			$data     = wp_remote_retrieve_body( $response );
 
-			if ( is_wp_error( $response ) ) {
-				$data = [];
+			// Don't cache failures, so the next request tries again.
+			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				$this->data = null;
+
+				return;
 			}
+
+			$data = wp_remote_retrieve_body( $response );
 
 			set_transient( 'bm_concierge_products', $data, 5 * MINUTE_IN_SECONDS );
 		}
 
-		$data = json_decode( $data );
-		$data = array_filter( $data->services, function ( $service ) {
-			return $service->name === $this->key;
+		$data     = json_decode( (string) $data );
+		$services = is_object( $data ) && isset( $data->services ) && is_array( $data->services ) ? $data->services : [];
+		$services = array_filter( $services, function ( $service ) {
+			return isset( $service->name ) && $service->name === $this->key;
 		} );
 
-		$this->data = $data[ array_key_first( $data ) ] ?? null;
+		$this->data = $services[ array_key_first( $services ) ] ?? null;
 	}
 
 	protected function get_order_internal_email_subject(): string {
@@ -128,13 +133,16 @@ abstract class BaseService {
 	public function get_currency(): string {
 		switch ( get_locale() ) {
 			case 'sv_SE':
-				return 'SEK';
+				$currency = 'SEK';
+				break;
 
 			case 'en_GB':
-				return 'GBP';
+				$currency = 'GBP';
+				break;
 
 			default:
-				return 'USD';
+				$currency = 'USD';
+				break;
 		}
 
 		return apply_filters( 'bm/concierge/currency', $currency, $this->key );

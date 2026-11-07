@@ -1,0 +1,57 @@
+{
+	"services": [
+		{
+			"name": "proofreading",
+			"startingPrice": {
+				"standard": { "SEK": 500, "GBP": 40, "USD": 50 },
+				"express": { "SEK": 1000, "GBP": 80, "USD": 100 }
+			},
+			"wordPricing": {
+				"standard": { "SEK": 1, "GBP": 0.1, "USD": 0.1 },
+				"express": { "SEK": 2, "GBP": 0.2, "USD": 0.2 }
+			}
+		},
+		{
+			"name": "accessibility",
+			"pricing": {
+				"standard": { "SEK": 2000, "GBP": 160, "USD": 200 },
+				"express": { "SEK": 3000, "GBP": 240, "USD": 300 }
+			}
+		},
+		{
+			"name": "onpage",
+			"smallLimit": 500,
+			"pricing": {
+				"standard": {
+					"small": { "SEK": 1500, "GBP": 120, "USD": 150 },
+					"large": { "SEK": 2500, "GBP": 200, "USD": 250 }
+				},
+				"express": {
+					"small": { "SEK": 2500, "GBP": 200, "USD": 250 },
+					"large": { "SEK": 3500, "GBP": 280, "USD": 350 }
+				}
+			}
+		},
+		{
+			"name": "layout",
+			"smallLimit": 300,
+			"mediumLimit": 1000,
+			"pricing": {
+				"standard": {
+					"small": { "SEK": 1000, "GBP": 80, "USD": 100 },
+					"medium": { "SEK": 2000, "GBP": 160, "USD": 200 },
+					"large": { "SEK": 3000, "GBP": 240, "USD": 300 }
+				},
+				"express": {
+					"small": { "SEK": 2000, "GBP": 160, "USD": 200 },
+					"medium": { "SEK": 3000, "GBP": 240, "USD": 300 },
+					"large": { "SEK": 4000, "GBP": 320, "USD": 400 }
+				}
+			}
+		},
+		{
+			"name": "machine_translation",
+			"wordPricing": { "SEK": 0.5, "GBP": 0.04, "USD": 0.05 }
+		}
+	]
+}

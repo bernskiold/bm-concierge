@@ -9,14 +9,19 @@
 eslint.config.cjs		export-ignore
 .gitattributes       	export-ignore
 .gitignore           	export-ignore
-.npmrc					export-ignore
 .nvmrc					export-ignore
 CHANGELOG.md			export-ignore
 README.md				export-ignore
+TESTING.md				export-ignore
 composer.lock			export-ignore
 package.json			export-ignore
 package-lock.json		export-ignore
 webpack.config.js		export-ignore
+vitest.config.mjs		export-ignore
+phpunit.xml.dist		export-ignore
+.wp-env.json			export-ignore
+/bin				export-ignore
+/tests				export-ignore
 
 .github					export-ignore
 .git                 	export-ignore
