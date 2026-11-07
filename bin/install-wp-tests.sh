@@ -5,7 +5,7 @@
 #
 #   bin/install-wp-tests.sh [wp-version] [db-name] [db-user] [db-pass] [db-host]
 #
-# wp-version is "latest" (default) or a release such as "6.8" or "6.8.3".
+# wp-version is "latest" (default) or a release such as "7.0" or "7.0.2".
 # Prints the environment variables to export for `composer test`.
 set -euo pipefail
 

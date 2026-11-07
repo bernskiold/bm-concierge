@@ -4,8 +4,9 @@
  * Plugin URI:          https://bernskioldmedia.com
  * Description:         Our help at your fingertips. BM Concierge lets you easily access content and assistive service for your site, right from the dashboard.
  * Version:             1.1.1
- * Requires at least:   6.8
- * Requires PHP:        8.1
+ * Requires at least:   7.0
+ * Tested up to:        7.1
+ * Requires PHP:        8.2
  * Author:              Bernskiold Media
  * Author URI:          https://bernskioldmedia.com
  * Text Domain:         bm-concierge
@@ -16,6 +17,7 @@
  */
 
 use BernskioldMedia\WP\Concierge\Plugin;
+use YahnisElsts\PluginUpdateChecker\v6\PucFactory;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -47,11 +49,11 @@ function bm_concierge(): Plugin {
 bm_concierge();
 
 /**
- * Run update checker if not disabled.
+ * Update the plugin from the ZIP attached to each GitHub release, unless
+ * BM_CONCIERGE_DISABLE_UPDATER is true. The update checker is a Composer
+ * dependency, shipped in the release ZIP's vendor/.
  */
-if ( ! defined( 'BM_CONCIERGE_DISABLE_UPDATER' ) || ( defined( 'BM_CONCIERGE_DISABLE_UPDATER' ) && false === BM_CONCIERGE_DISABLE_UPDATER ) ) {
-	require_once bm_concierge()::get_path( 'lib/plugin-update-checker/plugin-update-checker.php' );
-
-	$updater = Puc_v4_Factory::buildUpdateChecker( 'https://github.com/bernskiold/bm-concierge', __FILE__, 'bm-concierge' );
-	$updater->getVcsApi()->enableReleaseAssets();
+if ( ( ! defined( 'BM_CONCIERGE_DISABLE_UPDATER' ) || false === BM_CONCIERGE_DISABLE_UPDATER ) && class_exists( PucFactory::class ) ) {
+	$bm_concierge_updater = PucFactory::buildUpdateChecker( 'https://github.com/bernskiold/bm-concierge', __FILE__, 'bm-concierge' );
+	$bm_concierge_updater->getVcsApi()->enableReleaseAssets();
 }

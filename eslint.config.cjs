@@ -15,7 +15,6 @@ module.exports = [
 			'build/**',
 			'node_modules/**',
 			'vendor/**',
-			'lib/**',
 			'languages/**',
 		],
 	},

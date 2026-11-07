@@ -28,8 +28,8 @@
     "env:stop": "wp-env stop"
   },
   "engines": {
-    "node": ">=22.22.2",
-    "npm": ">=10"
+    "node": ">=26",
+    "npm": ">=11"
   },
   "author": {
     "name": "Bernskiold Media",
@@ -53,7 +53,7 @@
     "@wordpress/data": "^11.1.0",
     "@wordpress/editor": "^16.1.0",
     "@wordpress/element": "^10.1.0",
-    "@wordpress/env": "^11.17.0",
+    "@wordpress/env": "^12.1.0",
     "@wordpress/i18n": "^7.1.0",
     "@wordpress/plugins": "^8.1.0",
     "@wordpress/scripts": "^37.1.0",

@@ -28,7 +28,10 @@ export default function ConciergePanel() {
 		useMachineTranslationPrice();
 
 	const openConciergeSidebar = () => {
-		dispatch( 'core/edit-post' ).openGeneralSidebar(
+		// The interface store is what core/edit-post's openGeneralSidebar()
+		// calls, and unlike core/edit-post it is loaded in every editor.
+		dispatch( 'core/interface' ).enableComplementaryArea(
+			'core',
 			'bm-concierge/sidebar'
 		);
 	};
