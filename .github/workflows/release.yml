@@ -1,66 +1,99 @@
-name: Create Release
+name: Build Release
 on:
-    workflow_dispatch:
-        inputs:
-            versionName:
-                description: 'Version (ie 5.5.0)'
-                required: true
+    release:
+        types: [published]
+
+permissions:
+    contents: write
 
 jobs:
     release:
-        name: Create Release
+        name: Build & Attach Plugin
         runs-on: ubuntu-latest
         steps:
-        
+
             - name: Checkout Code
               uses: actions/checkout@v4
               with:
-                  ref: ${{ github.head_ref }}
-              
+                  ref: master
+                  fetch-depth: 0
+
+            - name: Determine Version
+              id: version
+              env:
+                  TAG: ${{ github.event.release.tag_name }}
+              run: echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   cache: npm
-              
+
             - name: Modify Package.json
               uses: mingjun97/file-regex-replace@v1
               with:
                   regex: '"version": "([0-9\.]*)",'
-                  replacement: '"version": "${{ github.event.inputs.versionName }}",'
+                  replacement: '"version": "${{ steps.version.outputs.version }}",'
                   include: 'package\.json'
-                  
+
             - name: Modify Main Plugin File
               uses: mingjun97/file-regex-replace@v1
               with:
                   regex: 'Version:(\s+)(.+)'
-                  replacement: 'Version:$1${{ github.event.inputs.versionName }}'
+                  replacement: 'Version:$1${{ steps.version.outputs.version }}'
                   include: '${{ github.event.repository.name}}\.php'
-                  
+
             - name: Modify Main Plugin Class
               uses: mingjun97/file-regex-replace@v1
               with:
                   regex: "version(\\s*\\t*)= '(.*)';"
-                  replacement: "version$1= '${{ github.event.inputs.versionName }}';"
+                  replacement: "version$1= '${{ steps.version.outputs.version }}';"
                   include: 'src/Plugin\.php'
-                  
+
             - name: Install NPM Packages
               run: npm ci --ignore-scripts
-            
+
             - name: Build
               run: npm run build
-              
-            - name: Commit
-              uses: stefanzweifel/git-auto-commit-action@v4
+
+            - name: Commit Version Bump & Build
+              uses: stefanzweifel/git-auto-commit-action@v5
               with:
                   branch: master
-                  commit_message: "Prepare release ${{ github.event.inputs.versionName }}"
-                  
-            - name: Release
-              uses: softprops/action-gh-release@v1
+                  commit_message: "Prepare release ${{ steps.version.outputs.version }}"
+
+            - name: Move Tag to Release Commit
+              env:
+                  TAG: ${{ github.event.release.tag_name }}
+              run: |
+                  git tag -f "$TAG" HEAD
+                  git push -f origin "refs/tags/$TAG"
+
+            # Unlike bm-block-library, this plugin has a runtime Composer
+            # dependency (DeepL) and is updated from this ZIP by the update
+            # checker, so the production vendor/ directory must ship in it.
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
               with:
-                  draft: true
-                  prerelease: false
-                  name: ${{ github.event.inputs.versionName }}
-                  tag_name: ${{ github.event.inputs.versionName }}
-                  generate_release_notes: true
+                  php-version: '8.1'
+                  tools: composer
+                  coverage: none
+
+            - name: Install Production Composer Dependencies
+              run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+            - name: Create Plugin ZIP
+              env:
+                  SLUG: ${{ github.event.repository.name }}
+              run: |
+                  mkdir -p build
+                  git archive --format=tar --prefix="$SLUG/" HEAD | tar -x -C build
+                  cp -R vendor "build/$SLUG/vendor"
+                  (cd build && zip -qr "../$SLUG.zip" "$SLUG")
+
+            - name: Attach ZIP to Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ github.event.release.tag_name }}
+                  files: ${{ github.event.repository.name }}.zip

@@ -12,6 +12,7 @@ eslint.config.cjs		export-ignore
 .npmrc					export-ignore
 .nvmrc					export-ignore
 CHANGELOG.md			export-ignore
+README.md				export-ignore
 composer.lock			export-ignore
 package.json			export-ignore
 package-lock.json		export-ignore
