@@ -112,6 +112,15 @@ npm run lint     # JS (ESLint flat config) + CSS (Stylelint)
 npm run format   # Prettier via wp-scripts
 ```
 
+### Tests
+
+```bash
+npm run test:unit   # JS unit tests (Vitest)
+composer test       # PHP integration tests, see TESTING.md for setup
+```
+
+See [TESTING.md](TESTING.md) for details.
+
 ### Preparing for Production
 
 Run `npm run build` to produce a minified production build. The `dist/` folder is committed, so commit the rebuilt files.
