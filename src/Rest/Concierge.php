@@ -7,63 +7,68 @@ use BernskioldMedia\WP\Concierge\Services\Layout;
 use BernskioldMedia\WP\Concierge\Services\MachineTranslation;
 use BernskioldMedia\WP\Concierge\Services\OnPageOptimization;
 use BernskioldMedia\WP\Concierge\Services\Proofreading;
-use BMCG_Vendor\BernskioldMedia\WP\PluginBase\Rest\RestEndpoint;
 use DeepL\Translator;
+use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Server;
 
 defined( 'ABSPATH' ) || exit;
 
-class Concierge extends RestEndpoint {
+class Concierge extends WP_REST_Controller {
 
-	protected $namespace = 'bm-concierge';
-	protected string $version = '1';
+	/**
+	 * Route namespace, including the version.
+	 *
+	 * @var string
+	 */
+	protected $namespace = 'bm-concierge/v1';
 
-	protected function setup_routes(): void {
+	public function register_routes(): void {
 		$this->add_route( '/services', [
-			'methods'             => self::READABLE,
+			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $this, 'get_enabled_services' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/proofreading', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_proofreading_data' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/accessibility', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_accessibility_audit_data' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/onpage', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_onpage_optimization_data' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/layout', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_layout_data' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/machine_translation', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_machine_translation_data' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/machine_translation_languages', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_machine_translation_languages' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
 
 		$this->add_route( '/order', [
-			'methods'             => self::CREATABLE,
+			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'process_order' ],
 			'permission_callback' => [ self::class, 'has_logged_in_access' ],
 		] );
@@ -154,6 +159,13 @@ class Concierge extends RestEndpoint {
 		];
 
 		return new WP_REST_Response( $data, 200 );
+	}
+
+	/**
+	 * Register a route in this controller's namespace.
+	 */
+	protected function add_route( string $route, array $args ): void {
+		register_rest_route( $this->namespace, $route, $args );
 	}
 
 	public static function has_logged_in_access(): bool {
