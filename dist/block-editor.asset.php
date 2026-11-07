@@ -11,5 +11,5 @@
 		'wp-plugins',
 		'wp-wordcount'
 	),
-	'version' => 'cae704e583ce918a55e8'
+	'version' => '13eb39e11057cd09e181'
 );
