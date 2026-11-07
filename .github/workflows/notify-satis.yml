@@ -1,6 +1,5 @@
-# Tells bernskiold/packages.bernskiold.com to rebuild the Satis index as soon as
-# this package publishes a new version, so it lands on packages.bernskiold.com
-# immediately instead of waiting for the nightly run.
+# Tells packages.bernskiold.com to rebuild its Satis index when this package
+# publishes a new version.
 name: Notify Satis
 
 on:
@@ -8,35 +7,13 @@ on:
         tags: ["*"]
     release:
         types: [published]
-    # "Build Release" bumps the version and force-pushes the tag onto the
-    # resulting commit. That push uses GITHUB_TOKEN, so it never fires
-    # `push: tags` on its own — without this trigger Satis would only ever see
-    # the pre-bump code.
-    workflow_run:
-        workflows: ["Build Release"]
-        types: [completed]
     workflow_dispatch:
 
-# Publishing a release usually creates its tag at the same moment, firing both
-# triggers. Collapsing them here keeps it to a single rebuild.
-concurrency:
-    group: notify-satis
-    cancel-in-progress: true
+permissions:
+    contents: read
 
 jobs:
-    dispatch:
-        name: Request Satis Rebuild
-        runs-on: ubuntu-latest
-        if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
-        steps:
-            # SATIS_DISPATCH_TOKEN is an org secret with repository_dispatch
-            # rights on the packages repo.
-            - name: Dispatch Build
-              uses: peter-evans/repository-dispatch@v3
-              with:
-                  token: ${{ secrets.SATIS_DISPATCH_TOKEN }}
-                  repository: bernskiold/packages.bernskiold.com
-                  event-type: build
-                  # Naming the repo lets Satis rescan only this one instead of
-                  # all of them. The URL must match satis.json exactly.
-                  client-payload: '{"repository_url": "https://github.com/${{ github.repository }}"}'
+    notify:
+        name: Notify Satis
+        uses: bernskiold/.github/.github/workflows/satis-notify.yml@main
+        secrets: inherit

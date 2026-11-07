@@ -5,84 +5,20 @@ on:
         branches:
             - master
     pull_request:
+    workflow_dispatch:
 
-# Least privilege: these jobs only read the repo.
 permissions:
     contents: read
 
-# A newer push to the same branch/PR cancels the in-flight run for it.
 concurrency:
     group: tests-${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
-    js:
-        name: JavaScript lint, unit tests & build
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Set up Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version-file: .nvmrc
-                  cache: npm
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Lint
-              run: npm run lint
-
-            - name: Run unit tests
-              run: npm run test:unit
-
-            # dist/ is committed, so make sure it matches the source.
-            - name: Check that the committed build is up to date
-              run: |
-                  npm run build
-                  git diff --exit-code -- dist/ || { echo "::error::dist/ is out of date. Run npm run build and commit the result."; exit 1; }
-
-    php:
-        name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 15
-        strategy:
-            fail-fast: false
-            matrix:
-                # The floor ("Requires PHP" / "Requires at least") up to the newest releases.
-                php: ['8.2', '8.3', '8.4', '8.5']
-                wp: ['7.0', 'latest']
-        services:
-            mysql:
-                image: mysql:8.0
-                env:
-                    MYSQL_ROOT_PASSWORD: root
-                    MYSQL_DATABASE: wordpress_tests
-                ports:
-                    - 3306:3306
-                options: >-
-                    --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
-                    --health-interval=10s
-                    --health-timeout=5s
-                    --health-retries=10
-        steps:
-            - uses: actions/checkout@v4
-
-            - name: Set up PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php }}
-                  extensions: mysqli
-                  tools: composer
-                  coverage: none
-
-            - name: Install Composer dependencies
-              uses: ramsey/composer-install@v3
-
-            - name: Install WordPress ${{ matrix.wp }} and its test library
-              run: bin/install-wp-tests.sh "${{ matrix.wp }}" wordpress_tests root root 127.0.0.1 >> "$GITHUB_ENV"
-
-            - name: Run PHP tests
-              run: composer test
+    tests:
+        name: Tests
+        uses: bernskiold/.github/.github/workflows/wordpress-plugin-tests.yml@main
+        with:
+            js-unit: true
+            # Not yet: phpcs (WPCS 3) still reports existing violations.
+            lint: false
