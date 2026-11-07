@@ -94,3 +94,28 @@ define( 'BM_CONCIERGE_ML_TRANSLATION_API_KEY', 'XXXXXX' );
 ```
 
 For Bernskiold Media projects we store this in our central management system which we generate for all clients. Alternatively you can sign up to [get your own API key with DeepL](https://www.deepl.com/pro-api).
+
+## For Developers
+
+### Quick Start
+
+1. Clone this repository to your plugin folder as `bm-concierge`.
+2. Install everything and build by running `npm run setup`. We expect npm and Composer to be installed globally.
+3. During development, run `npm start` (or `npm run dev`) to watch for changes and rebuild.
+
+You need Node.js 22.22.2+ (see `.nvmrc`). The editor script is built with the standard `@wordpress/scripts` pipeline from `assets/src/block-editor.js` into `dist/`.
+
+### Linting & Formatting
+
+```bash
+npm run lint     # JS (ESLint flat config) + CSS (Stylelint)
+npm run format   # Prettier via wp-scripts
+```
+
+### Preparing for Production
+
+Run `npm run build` to produce a minified production build. The `dist/` folder is committed, so commit the rebuilt files.
+
+### Translations
+
+Run `npm run i18n:pot` to rebuild and regenerate the POT file, and `npm run i18n:json` to generate the JSON files used by the editor script after updating the PO files.
