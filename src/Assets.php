@@ -10,15 +10,11 @@
 
 namespace BernskioldMedia\WP\Concierge;
 
-use BMCG_Vendor\BernskioldMedia\WP\PluginBase\AssetManager;
-
 defined( 'ABSPATH' ) || exit;
 
-class Assets extends AssetManager {
+class Assets implements Hookable {
 
 	public static function hooks(): void {
-		parent::hooks();
-
 		add_action( 'enqueue_block_editor_assets', [ self::class, 'block_editor' ] );
 	}
 
@@ -27,7 +23,7 @@ class Assets extends AssetManager {
 			return;
 		}
 
-		$meta = require_once Plugin::get_path( 'dist/block-editor.asset.php' );
+		$meta = require Plugin::get_path( 'dist/block-editor.asset.php' );
 		wp_register_script( 'bm-concierge-block-editor', Plugin::get_url( 'dist/block-editor.js' ), $meta['dependencies'] ?? [], $meta['version'] ?? Plugin::get_version(), true );
 
 		wp_register_style( 'bm-concierge-block-editor', Plugin::get_url( 'dist/block-editor.css' ), [], $meta['version'] ?? Plugin::get_version(), 'screen' );
