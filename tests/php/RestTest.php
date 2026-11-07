@@ -41,9 +41,9 @@ class RestTest extends TestCase {
 		return $this->server->dispatch( $request );
 	}
 
-	private function log_in(): \WP_User {
+	private function log_in( string $role = 'editor' ): \WP_User {
 		$user = self::factory()->user->create_and_get( [
-			'role'       => 'editor',
+			'role'       => $role,
 			'first_name' => 'Ada',
 			'last_name'  => 'Lovelace',
 			'user_email' => 'ada@example.com',
@@ -120,9 +120,13 @@ class RestTest extends TestCase {
 	public function test_unknown_order_type_is_rejected(): void {
 		$this->log_in();
 
-		$response = $this->request( 'POST', '/order', [ 'type' => 'nope' ] );
+		$post_id  = self::factory()->post->create();
+		$response = $this->request( 'POST', '/order', [
+			'type'   => 'nope',
+			'postId' => $post_id,
+		] );
 
-		$this->assertNotSame( 200, $response->get_status() );
+		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 0, did_action( 'phpmailer_init' ) );
 	}
 
@@ -151,5 +155,44 @@ class RestTest extends TestCase {
 		$this->assertSame( 'ada@example.com', $customer->to[0][0] );
 		$this->assertStringContainsString( 'Hi Ada,', $customer->body );
 		$this->assertStringContainsString( '$300', $customer->body );
+	}
+
+	public function test_users_who_cannot_edit_posts_are_denied(): void {
+		$this->log_in( 'subscriber' );
+
+		$this->assertSame( 403, $this->request( 'GET', '/services' )->get_status() );
+		$this->assertSame( 403, $this->request( 'POST', '/proofreading', [ 'wordCount' => 10 ] )->get_status() );
+	}
+
+	public function test_order_requires_a_valid_post(): void {
+		$this->log_in();
+
+		$this->assertSame( 400, $this->request( 'POST', '/order', [ 'type' => 'proofreading' ] )->get_status() );
+		$this->assertSame( 400, $this->request( 'POST', '/order', [
+			'type'   => 'proofreading',
+			'postId' => 999999,
+		] )->get_status() );
+	}
+
+	public function test_order_requires_permission_to_edit_the_post(): void {
+		$author  = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$post_id = self::factory()->post->create( [
+			'post_author'  => $author,
+			'post_title'   => 'Original',
+			'post_content' => 'Original content',
+		] );
+
+		// Contributors can edit their own drafts, but not someone else's post.
+		$this->log_in( 'contributor' );
+
+		$response = $this->request( 'POST', '/order', [
+			'type'           => 'machine_translation',
+			'postId'         => $post_id,
+			'targetLanguage' => 'sv',
+		] );
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'Original content', get_post( $post_id )->post_content );
+		$this->assertSame( 0, did_action( 'phpmailer_init' ) );
 	}
 }

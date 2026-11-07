@@ -8,6 +8,7 @@ use BernskioldMedia\WP\Concierge\Services\MachineTranslation;
 use BernskioldMedia\WP\Concierge\Services\OnPageOptimization;
 use BernskioldMedia\WP\Concierge\Services\Proofreading;
 use DeepL\Translator;
+use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -28,49 +29,49 @@ class Concierge extends WP_REST_Controller {
 		$this->add_route( '/services', [
 			'methods'             => WP_REST_Server::READABLE,
 			'callback'            => [ $this, 'get_enabled_services' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/proofreading', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_proofreading_data' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/accessibility', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_accessibility_audit_data' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/onpage', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_onpage_optimization_data' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/layout', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_layout_data' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/machine_translation', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_machine_translation_data' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/machine_translation_languages', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'get_machine_translation_languages' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_use_concierge' ],
 		] );
 
 		$this->add_route( '/order', [
 			'methods'             => WP_REST_Server::CREATABLE,
 			'callback'            => [ $this, 'process_order' ],
-			'permission_callback' => [ self::class, 'has_logged_in_access' ],
+			'permission_callback' => [ self::class, 'can_order_for_post' ],
 		] );
 	}
 
@@ -168,8 +169,37 @@ class Concierge extends WP_REST_Controller {
 		register_rest_route( $this->namespace, $route, $args );
 	}
 
-	public static function has_logged_in_access(): bool {
-		return is_user_logged_in();
+	/**
+	 * Concierge lives in the editor, so it is available to users who can
+	 * edit posts.
+	 */
+	public static function can_use_concierge(): bool {
+		return current_user_can( 'edit_posts' );
+	}
+
+	/**
+	 * Orders act on a specific post (machine translation rewrites it), so the
+	 * user must be able to edit that post.
+	 *
+	 * @return true|WP_Error
+	 */
+	public static function can_order_for_post( WP_REST_Request $request ) {
+		if ( ! self::can_use_concierge() ) {
+			return new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to do that.', 'bm-concierge' ), [ 'status' => rest_authorization_required_code() ] );
+		}
+
+		$data    = $request->get_json_params();
+		$post_id = absint( $data['postId'] ?? 0 );
+
+		if ( ! $post_id || ! get_post( $post_id ) ) {
+			return new WP_Error( 'bm_concierge_invalid_post', __( 'A valid post is required to place an order.', 'bm-concierge' ), [ 'status' => 400 ] );
+		}
+
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return new WP_Error( 'rest_forbidden', __( 'Sorry, you are not allowed to order services for this post.', 'bm-concierge' ), [ 'status' => rest_authorization_required_code() ] );
+		}
+
+		return true;
 	}
 
 	public function process_order( WP_REST_Request $request ): WP_REST_Response {
@@ -197,8 +227,10 @@ class Concierge extends WP_REST_Controller {
 				break;
 
 			default:
-				return new WP_REST_Response( [], 401 );
+				return new WP_REST_Response( [], 400 );
 		}
+
+		$data['postId'] = absint( $data['postId'] );
 
 		$service->order( $data );
 
