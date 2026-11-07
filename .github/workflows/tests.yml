@@ -20,5 +20,7 @@ jobs:
         uses: bernskiold/.github/.github/workflows/wordpress-plugin-tests.yml@main
         with:
             js-unit: true
+            js-lint: true
+            check-dist: true
             # Not yet: phpcs (WPCS 3) still reports existing violations.
-            lint: false
+            php-lint: false
