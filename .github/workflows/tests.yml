@@ -19,6 +19,8 @@ jobs:
         name: Tests
         uses: bernskiold/.github/.github/workflows/wordpress-plugin-tests.yml@main
         with:
+            # Drop 7.2-RC3 once 7.2 is released and "latest" picks it up.
+            wp-versions: '["7.0","latest","7.2-RC3"]'
             js-unit: true
             js-lint: true
             check-dist: true
@@ -32,4 +34,4 @@ jobs:
         uses: bernskiold/.github/.github/workflows/wordpress-plugin-tests.yml@main
         with:
             php-versions: '["8.6"]'
-            wp-versions: '["latest"]'
+            wp-versions: '["latest","7.2-RC3"]'
