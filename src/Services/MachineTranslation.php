@@ -34,7 +34,7 @@ class MachineTranslation extends BaseService {
 			];
 		}
 
-		$translator = new \DeepL\Translator( $api_key );
+		$translator = new \DeepL\DeepLClient( $api_key );
 		$post       = get_post( $post_id );
 
 		$options = [
