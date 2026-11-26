@@ -24,3 +24,12 @@ jobs:
             check-dist: true
             # Not yet: phpcs (WPCS 3) still reports existing violations.
             php-lint: false
+
+    # WordPress supports PHP 8.6 from 7.2. Older cores call spl_object_hash(),
+    # which PHP 8.6 deprecates, so test 8.6 against the latest release only.
+    php-86:
+        name: Tests (PHP 8.6)
+        uses: bernskiold/.github/.github/workflows/wordpress-plugin-tests.yml@main
+        with:
+            php-versions: '["8.6"]'
+            wp-versions: '["latest"]'

@@ -5,7 +5,7 @@
  * Description:         Our help at your fingertips. BM Concierge lets you easily access content and assistive service for your site, right from the dashboard.
  * Version:             2.0.0
  * Requires at least:   7.0
- * Tested up to:        7.1
+ * Tested up to:        7.2
  * Requires PHP:        8.2
  * Author:              Bernskiold Media
  * Author URI:          https://bernskioldmedia.com
