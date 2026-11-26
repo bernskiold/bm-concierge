@@ -7,7 +7,7 @@ use BernskioldMedia\WP\Concierge\Services\Layout;
 use BernskioldMedia\WP\Concierge\Services\MachineTranslation;
 use BernskioldMedia\WP\Concierge\Services\OnPageOptimization;
 use BernskioldMedia\WP\Concierge\Services\Proofreading;
-use DeepL\Translator;
+use DeepL\DeepLClient;
 use WP_Error;
 use WP_REST_Controller;
 use WP_REST_Request;
@@ -156,7 +156,7 @@ class Concierge extends WP_REST_Controller {
 		}
 
 		$data = [
-			'languages' => ( new Translator( BM_CONCIERGE_ML_TRANSLATION_API_KEY ) )->getTargetLanguages(),
+			'languages' => ( new DeepLClient( BM_CONCIERGE_ML_TRANSLATION_API_KEY ) )->getTargetLanguages(),
 		];
 
 		return new WP_REST_Response( $data, 200 );
